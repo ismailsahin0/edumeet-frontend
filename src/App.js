@@ -1,79 +1,46 @@
+import React from 'react';
+import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import { useEffect, useState } from 'react';
-import ListOfTodo from './components/ListOfTodo'
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+
+import Login from "./components/Login";
+import SignUp from "./components/SignUp";
+import ListOfTodo from './components/ListOfTodo';
+import ForgotPassword from './components/ForgotPassword';
+import UpdatePassword from './components/UpdatePassword';
 
 function App() {
-  const [auth,setAuth] =  useState(false || window.localStorage.getItem('auth') === 'true');
-  const [token,setToken] = useState('');
-
-useEffect(()=>{
-  firebase.auth().onAuthStateChanged((userCred)=>{
-    if(userCred){
-      console.log("userCred");
-      console.log(userCred);
-      setAuth(true);
-      window.localStorage.setItem('auth','true');
-      userCred.getIdToken().then((token)=>{
-        setToken(token);
-      })
-    }
-  });
-},[]);
-
-const signinWithEmail = ()=>{
-  firebase
-    .auth()
-    .signInWithEmailAndPassword("sahinismail0618@gmail.com","ismail12345")
-    .then((resp)=>{
-      console.log("login is done")
-    }).catch((error)=>{
-      console.log(error);
-    })
-}
-
-const signOut = ()=>{
-  firebase
-    .auth()
-    .signOut()
-    .then((resp)=>{
-      console.log("signout is done");
-      setAuth(false);
-      window.localStorage.setItem('auth','false');
-      setToken('');
-    }).catch((error)=>{
-      console.log(error);
-    })
-}
-
-  const loginWithGoogle = ()=>{
-    firebase
-      .auth()
-      .signInWithPopup(new firebase.auth.GoogleAuthProvider())
-      .then((userCred)=>{
-        if(userCred){
-          setAuth(true);
-          window.localStorage.setItem('auth','true');
-        }
-      })
-  }
-
-  const updatePassword = () => {
-    console.log("currentuser",firebase.auth().currentUser);
-  }
-  return (
+  return (<Router>
     <div className="App">
-      {auth ? (
-        <ListOfTodo token={token}/>
-      ): (
-        <button onClick={loginWithGoogle}>Login With Google</button>
-      )}
-      <button onClick={signinWithEmail}>Sign In With Email</button>
-      <button onClick={signOut}>Sign Out</button>
-      <button onClick={updatePassword}>updatePassword</button>
-      
-    </div>
+      {/* <nav className="navbar navbar-expand-lg navbar-light fixed-top">
+        <div className="container">
+          <Link className="navbar-brand" to={"/sign-in"}>RemoteStack</Link>
+          <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
+            <ul className="navbar-nav ml-auto">
+              <li className="nav-item">
+                <Link className="nav-link" to={"/sign-in"}>Sign in</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to={"/sign-up"}>Sign up</Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav> */}
+
+      <div className="outer">
+        <div className="inner">
+          <Switch>
+            <Route exact path='/' component={ListOfTodo} />
+            <Route path='/list-of-todo' component={ListOfTodo} />
+            <Route path="/sign-in" component={Login} />
+            <Route path="/sign-up" component={SignUp} />
+            <Route path="/forgot-password" component={ForgotPassword} />
+            <Route path="/update-password" component={UpdatePassword} />
+          </Switch>
+        </div>
+      </div>
+    </div></Router>
   );
 }
 
